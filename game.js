@@ -35,8 +35,8 @@ function preload() {
     this.load.image('yer', 'https://labs.phaser.io/assets/sprites/platform.png'); // Temsili zemin (Phaser'ın kendi assets'inden)
     
     // === Kişiselleştirilmiş Karakterler ===
-    this.load.image('prens', 'prens.png'); 
-    this.load.image('prenses', 'prenses.png');
+    this.load.image('prens', 'prens.png.jpeg'); 
+    this.load.image('prenses', 'prenses.png.jpeg');
     this.load.image('kule', 'kule.png');
 
     // === Oyun Elemanları ===
@@ -152,3 +152,4 @@ function hitObstacle(player, obstacle) {
     gameOver = true; // Oyun bitti bayrağını işaretle
     this.add.text(400, 300, 'OYUN BİTTİ!', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
 }
+
