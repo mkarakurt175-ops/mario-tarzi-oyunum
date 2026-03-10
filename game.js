@@ -37,7 +37,7 @@ function preload() {
     // === Kişiselleştirilmiş Karakterler ===
     this.load.image('prens', 'prens.png.jpeg'); 
     this.load.image('prenses', 'prenses.png.jpeg');
-    this.load.image('kule', 'kule.png');
+    this.load.image('kule', 'kule.png.jpeg');
 
     // === Oyun Elemanları ===
     // Phaser'ın kendi örnek altın ve engel görsellerini kullanıyoruz (Bunları da kendi yüklediklerinle değiştirebilirsin!)
@@ -152,4 +152,5 @@ function hitObstacle(player, obstacle) {
     gameOver = true; // Oyun bitti bayrağını işaretle
     this.add.text(400, 300, 'OYUN BİTTİ!', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
 }
+
 
