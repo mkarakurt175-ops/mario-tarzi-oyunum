@@ -26,8 +26,8 @@ function preload() {
     // Not: Dosyaları bir klasörün içine koyduysan 'assets/prens.png' şeklinde yazmalısın
     this.load.image('arkaPlan', 'arka-plan.png'); 
     this.load.image('yer', 'https://labs.phaser.io/assets/sprites/platform.png'); // Zemin için geçici
-    this.load.image('prens', 'prens.png'); 
-    this.load.image('prenses', 'prenses.png');
+    this.load.image('prens', 'prens.png.jpeg'); 
+    this.load.image('prenses', 'prenses.png.jpeg');
     this.load.image('kule', 'kule.png');
 }
 
@@ -84,3 +84,4 @@ function update() {
         player.setScale(0.6);
     }
 }
+
