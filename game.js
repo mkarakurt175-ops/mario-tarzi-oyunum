@@ -51,10 +51,10 @@ function create() {
     this.add.image(400, 300, 'arkaPlan').setScale(1.5);
 
     // 2. Kule (Sağda) ve Prensesi Yerleştir (Kule penceresinde)
-    this.add.image(700, 350, 'kule').setScale(0.8);
+    this.add.image(700, 350, 'kule').setScale(0.3);
     // === Prenses Küçültüldü ===
     // Seni kulenin penceresine sığdırmak için 0.3 yaptık. İhtiyaca göre bu rakamı değiştir.
-    this.add.image(700, 220, 'prenses').setScale(0.3); 
+    this.add.image(700, 220, 'prenses').setScale(0.015); 
 
     // 3. Platform Grubu (Sabit, fizik özellikli)
     platforms = this.physics.add.staticGroup();
@@ -152,5 +152,6 @@ function hitObstacle(player, obstacle) {
     gameOver = true; // Oyun bitti bayrağını işaretle
     this.add.text(400, 300, 'OYUN BİTTİ!', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
 }
+
 
 
