@@ -35,29 +35,29 @@ function create() {
     // 1. Arka Plan
     this.add.image(400, 300, 'arkaPlan').setScale(1.5);
 
-    // 2. Kule ve Prenses (DAHA KÜÇÜK VE DÜZGÜN YERLEŞTİRİLMİŞ)
-    // Kuleyi sağa ve aşağıya aldık, boyutunu küçülttük.
-    this.add.image(720, 480, 'kule').setScale(0.3); 
+    // 2. Kule ve Prenses (ÇOK DAHA KÜÇÜK)
+    // Kuleyi sağa ve aşağıya aldık, boyutunu çok daha küçülttük.
+    this.add.image(720, 480, 'kule').setScale(0.1); 
     
-    // Prensesi kule penceresine (varsa) veya yanına hizaladık, boyutunu küçülttük.
-    this.add.image(720, 390, 'prenses').setScale(0.15); 
+    // Prensesi kule penceresine (varsa) veya yanına hizaladık, boyutunu çok daha küçülttük.
+    this.add.image(720, 390, 'prenses').setScale(0.05); 
 
     // 3. Platformlar
     platforms = this.physics.add.staticGroup();
     platforms.create(400, 580, 'yer').setScale(2.5).refreshBody(); // Ana zemin
     
-    // Mario tarzı basamaklar (Konumları karakter boyutuna göre ayarladım)
+    // Mario tarzı basamaklar (Konumları küçük karakter boyutuna göre ayarladım)
     platforms.create(250, 480, 'yer');
     platforms.create(450, 380, 'yer');
     platforms.create(600, 310, 'yer'); // Kuleye giden son basamak
 
-    // 4. Prens (Erkek Arkadaşın) - (DAHA KÜÇÜK VE BAŞLANGIÇ NOKTASI AYARLANMIŞ)
+    // 4. Prens (Erkek Arkadaşın) - (ÇOK DAHA KÜÇÜK)
     player = this.physics.add.sprite(100, 500, 'prens');
     player.setBounce(0.1);
     player.setCollideWorldBounds(true);
     
-    // Prensin boyutunu küçülttük (En önemli değişiklik)
-    player.setScale(0.25); 
+    // Prensin boyutunu çok daha küçülttük (En önemli değişiklik)
+    player.setScale(0.1); 
 
     // 5. Fizik
     this.physics.add.collider(player, platforms);
@@ -86,9 +86,9 @@ function update() {
     // Eğilme (Karakter zaten küçük olduğu için bu kısmı şimdilik pasif bırakıyorum)
     /*
     if (cursors.down.isDown) {
-        player.setScale(0.15); 
+        player.setScale(0.05); 
     } else {
-        player.setScale(0.25);
+        player.setScale(0.1);
     }
     */
 }
