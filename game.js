@@ -1,4 +1,3 @@
-// OYUN AYARLARI
 const config = {
     type: Phaser.AUTO,
     width: 800,
@@ -6,8 +5,8 @@ const config = {
     physics: {
         default: 'arcade',
         arcade: {
-            gravity: { y: 600 }, // Mario tarzı zıplama için yerçekimi artırıldı
-            debug: false // Geliştirme için true yapabilirsin
+            gravity: { y: 500 }, 
+            debug: false
         }
     },
     scene: {
@@ -21,137 +20,75 @@ const game = new Phaser.Game(config);
 let player;
 let cursors;
 let platforms;
-let coins;
-let obstacles;
-let score = 0;
-let scoreText;
-let gameOver = false;
 
-// GÖRSELLERİ YÜKLEME
 function preload() {
-    // Klasör yapını buraya uygun şekilde güncelledik
-    // Eğer dosyaların bir klasörün içindeyse 'assets/arka-plan.png' gibi yazmalısın
-    this.load.image('arkaPlan', 'arka-plan.png');
-    this.load.image('yer', 'https://labs.phaser.io/assets/sprites/platform.png'); // Temsili zemin (Phaser'ın kendi assets'inden)
-    
-    // === Kişiselleştirilmiş Karakterler ===
-    this.load.image('prens', 'prens.png.jpeg'); 
-    this.load.image('prenses', 'prenses.png.jpeg');
-    this.load.image('kule', 'kule.png.jpeg');
-
-    // === Oyun Elemanları ===
-    // Phaser'ın kendi örnek altın ve engel görsellerini kullanıyoruz (Bunları da kendi yüklediklerinle değiştirebilirsin!)
-    this.load.image('altin', 'https://labs.phaser.io/assets/sprites/coin.png');
-    this.load.image('engel', 'https://labs.phaser.io/assets/sprites/spikes.png'); // Dikenli engel
+    // Görselleri yüklüyoruz. İsimlerin birebir aynı olduğundan emin ol.
+    // Eğer klasör içindeyseler (assets gibi), yolunu 'assets/prens.png' yapmalısın.
+    this.load.image('arkaPlan', 'arka-plan.png'); 
+    this.load.image('yer', 'https://labs.phaser.io/assets/sprites/platform.png'); 
+    this.load.image('prens', 'prens.png'); 
+    this.load.image('prenses', 'prenses.png');
+    this.load.image('kule', 'kule.png');
 }
 
-// OYUN DÜNYASINI OLUŞTURMA
 function create() {
     // 1. Arka Plan
     this.add.image(400, 300, 'arkaPlan').setScale(1.5);
 
-    // 2. Kule (Sağda) ve Prensesi Yerleştir (Kule penceresinde)
-    this.add.image(700, 350, 'kule').setScale(0.3);
-    // === Prenses Küçültüldü ===
-    // Seni kulenin penceresine sığdırmak için 0.3 yaptık. İhtiyaca göre bu rakamı değiştir.
-    this.add.image(700, 220, 'prenses').setScale(0.015); 
+    // 2. Kule ve Prenses (DAHA KÜÇÜK VE DÜZGÜN YERLEŞTİRİLMİŞ)
+    // Kuleyi sağa ve aşağıya aldık, boyutunu küçülttük.
+    this.add.image(720, 480, 'kule').setScale(0.3); 
+    
+    // Prensesi kule penceresine (varsa) veya yanına hizaladık, boyutunu küçülttük.
+    this.add.image(720, 390, 'prenses').setScale(0.15); 
 
-    // 3. Platform Grubu (Sabit, fizik özellikli)
+    // 3. Platformlar
     platforms = this.physics.add.staticGroup();
-    platforms.create(400, 568, 'yer').setScale(2.5).refreshBody(); // Ana Zemin
+    platforms.create(400, 580, 'yer').setScale(2.5).refreshBody(); // Ana zemin
+    
+    // Mario tarzı basamaklar (Konumları karakter boyutuna göre ayarladım)
+    platforms.create(250, 480, 'yer');
+    platforms.create(450, 380, 'yer');
+    platforms.create(600, 310, 'yer'); // Kuleye giden son basamak
 
-    // Mario tarzı basamaklar (X, Y koordinatları)
-    platforms.create(600, 400, 'yer');
-    platforms.create(50, 250, 'yer');
-    platforms.create(750, 220, 'yer'); // Kuleye giden son basamak
+    // 4. Prens (Erkek Arkadaşın) - (DAHA KÜÇÜK VE BAŞLANGIÇ NOKTASI AYARLANMIŞ)
+    player = this.physics.add.sprite(100, 500, 'prens');
+    player.setBounce(0.1);
+    player.setCollideWorldBounds(true);
+    
+    // Prensin boyutunu küçülttük (En önemli değişiklik)
+    player.setScale(0.25); 
 
-    // 4. Prens (Erkek Arkadaşın) - Ana Karakter
-    player = this.physics.add.sprite(100, 450, 'prens');
-
-    // === Prens Küçültüldü ===
-    // Erkek arkadaşını Mario boyutuna yakın yapmak için 0.4 yaptık.
-    player.setScale(0.4); 
-    player.setBounce(0.2); // Hafif sekme
-    player.setCollideWorldBounds(true); // Ekrandan çıkmasın
-
-    // 5. Fizik Çarpışmaları (Karakter zemin ve platformlarla çarpışır)
+    // 5. Fizik
     this.physics.add.collider(player, platforms);
 
-    // 6. Kontroller (Klavye Ok Tuşları)
+    // 6. Kontroller
     cursors = this.input.keyboard.createCursorKeys();
-
-    // 7. ALTINLARI EKLE (Kendi grubunu oluşturduk)
-    coins = this.physics.add.group({
-        key: 'altin',
-        repeat: 7, // Toplam 8 altın
-        setXY: { x: 150, y: 0, stepX: 90 } // İlki 150'de, sonra her 90 pikselde bir
-    });
-
-    // Altınların yere düşmesini sağla
-    this.physics.add.collider(coins, platforms);
-    
-    // Oyuncu altına değdiğinde 'collectCoin' fonksiyonunu çalıştır
-    this.physics.add.overlap(player, coins, collectCoin, null, this);
-
-    // 8. ENGELLERİ EKLE (Dikenli Engeller)
-    obstacles = this.physics.add.group();
-    obstacles.create(400, 520, 'engel'); // İlk engel zemin üzerinde
-    obstacles.create(650, 360, 'engel'); // İkinci engel platformda
-    
-    this.physics.add.collider(obstacles, platforms);
-    
-    // Oyuncu engele değdiğinde 'hitObstacle' fonksiyonunu çalıştır
-    this.physics.add.collider(player, obstacles, hitObstacle, null, this);
-
-    // 9. Skor Metni
-    scoreText = this.add.text(16, 16, 'Altın: 0', { fontSize: '32px', fill: '#fff' });
 }
 
-// OYUN DÖNGÜSÜ VE HAREKETLER
 function update() {
-    if (gameOver) { return; } // Oyun bittiyse hareket etme
-
-    // Sağa/Sola Hareket
+    // Hızları ve zıplama gücünü küçük karakter boyutuna göre hafifçe ayarladım
     if (cursors.left.isDown) {
-        player.setVelocityX(-200);
-        player.flipX = true; // Sola dönerken karakteri ters çevir
+        player.setVelocityX(-160);
+        player.flipX = true; 
     } else if (cursors.right.isDown) {
-        player.setVelocityX(200);
-        player.flipX = false; // Sağa dönerken düzel
+        player.setVelocityX(160);
+        player.flipX = false;
     } else {
         player.setVelocityX(0);
     }
 
-    // Zıplama (Sadece zemindeyken)
+    // Zıplama
     if (cursors.up.isDown && player.body.touching.down) {
-        player.setVelocityY(-450); // Zıplama gücünü artırdık
+        player.setVelocityY(-350);
     }
 
-    // Eğilme (Basitçe hızı yavaşlatma)
+    // Eğilme (Karakter zaten küçük olduğu için bu kısmı şimdilik pasif bırakıyorum)
+    /*
     if (cursors.down.isDown) {
-        player.setVelocityX(0); // Eğilirken dur
-        player.setScale(0.3); // Eğilince biraz daha küçült
+        player.setScale(0.15); 
     } else {
-        player.setScale(0.4); // Eğilmeyince normal boyutuna dön
+        player.setScale(0.25);
     }
+    */
 }
-
-// ALTIN TOPLAMA FONKSİYONU
-function collectCoin(player, coin) {
-    coin.disableBody(true, true); // Altını yok et (Ekranda görünmez yap)
-    
-    score += 10; // 10 puan ekle
-    scoreText.setText('Altın: ' + score); // Skoru güncelle
-}
-
-// ENGELE ÇARPMA FONKSİYONU
-function hitObstacle(player, obstacle) {
-    this.physics.pause(); // Oyunu durdur
-    player.setTint(0xff0000); // Oyuncuyu kırmızı yap
-    player.anims.play('turn'); // Durma animasyonu (varsa)
-    gameOver = true; // Oyun bitti bayrağını işaretle
-    this.add.text(400, 300, 'OYUN BİTTİ!', { fontSize: '64px', fill: '#ff0000' }).setOrigin(0.5);
-}
-
-
-
